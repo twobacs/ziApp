@@ -30,17 +30,20 @@ class ziApp{
         $this->path=$appPath;
         //OBTAIN THE PROPERTIES OF THE WEBSITE IN USE
         include_once $this->path.'/configuration/main.config.php';
+        //CHECK THE URL TO SET application and function to use
+        //If not set, use to default defined in the configuration file
         $tempApplication=  filter_input(INPUT_GET, 'application');
         $this->application=(isset($tempApplication)) ? ucfirst($tempApplication) : ucfirst($defaultApplication);
-        $tempFunction=  filter_input(INPUT_GET, 'application');
+        $tempFunction=  filter_input(INPUT_GET, 'function');
         $this->function=(isset($tempFunction)) ? ucfirst($tempFunction) : ucfirst($defaultFunction);
+        
         $this->loadApplication();
+        $this->showSite();
     }
     
     private function loadApplication(){
         include_once $this->path.'/applications/'.$this->application.'/controler_'.$this->application.'.php';
         $Ctemp='C'.$this->application;
-        $Mtemp='M'.$this->application;
         $appInUse = new $Ctemp($this->application,$this->pdo);
         $temp=$this->function;
         $this->content=$appInUse->$temp();
