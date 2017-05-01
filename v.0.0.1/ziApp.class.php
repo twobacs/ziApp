@@ -19,8 +19,34 @@
 
 class ziApp{
     private $path;
-    
+    public $pdo;
+    public $index;
+    public $content;
+    private $application;
+    private $function;
+
     public function __construct($appPath){
-        $this->path=$appPath;  //SET THE LOCATION OF THE WEBISTE
+        //SET THE LOCATION OF THE WEBISTE
+        $this->path=$appPath;
+        //OBTAIN THE PROPERTIES OF THE WEBSITE IN USE
+        include_once $this->path.'/configuration/main.config.php';
+        $tempApplication=  filter_input(INPUT_GET, 'application');
+        $this->application=(isset($tempApplication)) ? ucfirst($tempApplication) : ucfirst($defaultApplication);
+        $tempFunction=  filter_input(INPUT_GET, 'application');
+        $this->function=(isset($tempFunction)) ? ucfirst($tempFunction) : ucfirst($defaultFunction);
+        $this->loadApplication();
+    }
+    
+    private function loadApplication(){
+        include_once $this->path.'/applications/'.$this->application.'/controler_'.$this->application.'.php';
+        $Ctemp='C'.$this->application;
+        $Mtemp='M'.$this->application;
+        $appInUse = new $Ctemp($this->application,$this->pdo);
+        $temp=$this->function;
+        $this->content=$appInUse->$temp();
+    }
+    
+    public function showSite(){
+        include_once $this->path.$this->index;
     }
 }
